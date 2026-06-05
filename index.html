@@ -470,6 +470,8 @@ async function loadAgents() {
     const res  = await fetch(`${API_URL}?action=getAgents`);
     const data = await res.json();
     agents = data.agents || [];
+    // 確認 branch 欄位是否正確
+    console.log('業務資料範例：', JSON.stringify(agents[0]));
 
     // 取出不重複的單位清單（依原始順序）
     const branches = [...new Set(agents.map(a => a.branch).filter(Boolean))];
@@ -514,7 +516,7 @@ function onBranchChange() {
     return;
   }
 
-  // 依單位篩選業務
+  // 依單位篩選業務（branch 欄位，index 4）
   const filtered = agents.filter(a => a.branch === branch);
   filtered.forEach(a => {
     const opt = document.createElement('option');
@@ -546,7 +548,7 @@ function onAgentChange() {
   const placeholder = document.getElementById('avatar-placeholder');
 
   if (current.photo_url) {
-    img.src = current.photo_url;
+    img.src = proxyUrl(current.photo_url);
     img.onload  = () => { img.style.display = 'block'; placeholder.style.display = 'none'; };
     img.onerror = () => { img.style.display = 'none';  placeholder.style.display = 'flex'; };
   } else {
@@ -670,8 +672,8 @@ async function generateCard() {
   // 載入底圖與業務照片
   setStatus('載入底圖中…');
   const [bgImg, agentImg] = await Promise.all([
-    loadImage(BG_URL).catch(() => null),
-    current.photo_url ? loadImage(current.photo_url).catch(() => null) : Promise.resolve(null)
+    loadImage(proxyUrl(BG_URL)).catch(() => null),
+    current.photo_url ? loadImage(proxyUrl(current.photo_url)).catch(() => null) : Promise.resolve(null)
   ]);
 
   // ── 開始繪製 ──
@@ -712,6 +714,12 @@ async function generateCard() {
   document.getElementById('btn-gen').disabled = false;
   setStatus('✓ 業務卡已產生', 'ok');
   setProgress(4);
+}
+
+// Drive 圖片透過代理載入，解決 CORS 問題
+function proxyUrl(url) {
+  if (!url) return '';
+  return 'https://images.weserv.nl/?url=' + encodeURIComponent(url.replace('https://', ''));
 }
 
 // 載入圖片 Promise
