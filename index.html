@@ -459,9 +459,9 @@ const BRAND_LOGOS = {
 };
 const LAYOUT = {
   photo: { x: 340, y: 220, w: 380, h: 560, r: 16 },
-  name:  { x: 60,  y: 800, w: 960, h: 90  },
-  phone: { x: 60,  y: 890, w: 960, h: 100 },
-  date:  { x: 680, y: 530, w: 320, h: 120 },
+  name:  { x: 335, y: 790, w: 390, h: 80  },
+  phone: { x: 400, y: 875, w: 430, h: 65  },
+  date:  { x: 740, y: 530, w: 240, h: 150 },
 };
 
 // ── 狀態 ──
@@ -752,7 +752,7 @@ function loadImage(src) {
 
 // 品牌 Logo（左上，對應參考圖比例）
 function drawBrandLogo(ctx, img) {
-  const x = 20, y = 18, w = 420, h = 145;
+  const x = 20, y = 15, w = 585, h = 232;
   ctx.save();
   const scale = Math.min(w / img.width, h / img.height);
   const sw = img.width  * scale;
@@ -798,33 +798,37 @@ function drawAgentPhotoPlaceholder(ctx) {
   ctx.restore();
 }
 
-// 姓名（下方置中，灰色粗體＋白色描邊）
+// 姓名（下方置中，灰色粗體＋白色描邊＋文字間距）
 function drawAgentName(ctx, name) {
   const { x, y, w, h } = LAYOUT.name;
   ctx.save();
   ctx.font = `900 88px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '8px';
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 6;
   ctx.strokeText(name, x + w / 2, y + h / 2);
   ctx.fillStyle = '#4c4647';
   ctx.fillText(name, x + w / 2, y + h / 2);
+  ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
-// 電話（name下方，灰色粗體＋白色描邊，Bebas Neue）
+// 電話（name下方，灰色粗體＋白色描邊＋文字間距，Bebas Neue）
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
   ctx.font = `bold 100px "Bebas Neue"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '6px';
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 6;
   ctx.strokeText(phone, x + w / 2, y + h / 2);
   ctx.fillStyle = '#4c4647';
   ctx.fillText(phone, x + w / 2, y + h / 2);
+  ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
