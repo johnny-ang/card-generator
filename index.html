@@ -763,17 +763,36 @@ function drawBrandLogo(ctx, img) {
   ctx.restore();
 }
 
-// 人物照片：填入紅框區域
+// 人物照片：智慧裁切，依比例自動調整對齊位置
 function drawAgentPhoto(ctx, img) {
   const { x, y, w, h, r } = LAYOUT.photo;
-  ctx.save();
-  roundRectPath(ctx, x, y, w, h, r);
-  ctx.clip();
+
+  const imgRatio  = img.width / img.height;  // 原圖比例
+  const boxRatio  = w / h;                   // 框框比例
+
   const scale = Math.max(w / img.width, h / img.height);
   const sw = img.width  * scale;
   const sh = img.height * scale;
+
+  // 水平：永遠置中
   const sx = x + (w - sw) / 2;
-  const sy = y + (h - sh) / 2;
+
+  // 垂直對齊策略：依原圖比例決定
+  let sy;
+  if (imgRatio < 0.75) {
+    // 直式人像（較高）：從頂部往下偏移15%，保留臉部和上半身
+    sy = y - (sh - h) * 0.15;
+  } else if (imgRatio > 1.2) {
+    // 橫式照片：往上偏移，避免人物被裁到腳
+    sy = y - (sh - h) * 0.3;
+  } else {
+    // 接近方形：置中偏上一點
+    sy = y - (sh - h) * 0.2;
+  }
+
+  ctx.save();
+  roundRectPath(ctx, x, y, w, h, r);
+  ctx.clip();
   ctx.drawImage(img, sx, sy, sw, sh);
   ctx.restore();
 }
