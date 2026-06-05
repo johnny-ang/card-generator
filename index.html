@@ -451,7 +451,12 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
 const API_URL = "https://script.google.com/macros/s/AKfycbw-yw0sqW_PHb0AAEBGDEE1rB5kxxIVSLETWjjLVKnLmn0OZQ-zPn6y6-kBXHVtQvuf/exec";
 const BG_URL  = "https://drive.google.com/uc?id=117pdWRYQrN10KPrIjHJJyBmS0ZZwfELw";
 
-// 版面座標設定（對應 1080×1080 底圖）
+// 品牌 Logo 對應表
+const BRAND_LOGOS = {
+  '永慶不動產': 'https://drive.google.com/uc?id=1LcuW_637pHoTXDPW23Rk7UYZSjunWlA0',
+  '永義房屋':   'https://drive.google.com/uc?id=1EFqWLqVE69s1yANFGcWauNjkCGtiI5Vc',
+  '有巢氏房屋': 'https://drive.google.com/uc?id=1LYLgFJxZ0_Tx7KkmxGdZ9GD_eFmma2na',
+};
 const LAYOUT = {
   photo: { x: 340, y: 220, w: 380, h: 580, r: 16 },
   name:  { x: 340, y: 820, w: 380, h: 70  },
@@ -548,6 +553,7 @@ function onAgentChange() {
   const placeholder = document.getElementById('avatar-placeholder');
 
   if (current.photo_url) {
+    img.crossOrigin = 'anonymous';
     img.src = proxyUrl(current.photo_url);
     img.onload  = () => { img.style.display = 'block'; placeholder.style.display = 'none'; };
     img.onerror = () => { img.style.display = 'none';  placeholder.style.display = 'flex'; };
@@ -669,11 +675,13 @@ async function generateCard() {
   const W = 1080, H = 1080;
   canvas.width = W; canvas.height = H;
 
-  // 載入底圖與業務照片
+  // 載入底圖、業務照片、品牌 Logo
   setStatus('載入底圖中…');
-  const [bgImg, agentImg] = await Promise.all([
+  const brandLogoUrl = current.brand ? BRAND_LOGOS[current.brand] : null;
+  const [bgImg, agentImg, brandImg] = await Promise.all([
     loadImage(proxyUrl(BG_URL)).catch(() => null),
-    current.photo_url ? loadImage(proxyUrl(current.photo_url)).catch(() => null) : Promise.resolve(null)
+    current.photo_url ? loadImage(proxyUrl(current.photo_url)).catch(() => null) : Promise.resolve(null),
+    brandLogoUrl ? loadImage(proxyUrl(brandLogoUrl)).catch(() => null) : Promise.resolve(null)
   ]);
 
   // ── 開始繪製 ──
@@ -686,7 +694,12 @@ async function generateCard() {
     drawStars(ctx, W, H);
   }
 
-  // 2. 人物照片（紅框區域）
+  // 2. 品牌 Logo（左上 brand 區域）
+  if (brandImg) {
+    drawBrandLogo(ctx, brandImg);
+  }
+
+  // 3. 人物照片（紅框區域）
   if (agentImg) {
     drawAgentPhoto(ctx, agentImg);
   } else {
@@ -736,6 +749,20 @@ function loadImage(src) {
 // ────────────────────────────────────────────────────
 //  繪製函式（對應底圖座標）
 // ────────────────────────────────────────────────────
+
+// 品牌 Logo（左上 brand 框區域）
+function drawBrandLogo(ctx, img) {
+  const x = 30, y = 20, w = 390, h = 130;
+  ctx.save();
+  // 等比例置中繪製，不裁切，保留透明背景
+  const scale = Math.min(w / img.width, h / img.height);
+  const sw = img.width  * scale;
+  const sh = img.height * scale;
+  const sx = x + (w - sw) / 2;
+  const sy = y + (h - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh);
+  ctx.restore();
+}
 
 // 人物照片：填入紅框區域
 function drawAgentPhoto(ctx, img) {
