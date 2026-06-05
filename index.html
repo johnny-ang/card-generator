@@ -752,9 +752,8 @@ function loadImage(src) {
 
 // 品牌 Logo（左上 brand 框區域）
 function drawBrandLogo(ctx, img) {
-  const x = 30, y = 20, w = 390, h = 130;
+  const x = 20, y = 15, w = 430, h = 150;
   ctx.save();
-  // 等比例置中繪製，不裁切，保留透明背景
   const scale = Math.min(w / img.width, h / img.height);
   const sw = img.width  * scale;
   const sh = img.height * scale;
@@ -799,39 +798,44 @@ function drawAgentPhotoPlaceholder(ctx) {
   ctx.restore();
 }
 
-// 姓名（藍框區域）
+// 姓名（藍框區域）- 參考：宋書妤 大白字
 function drawAgentName(ctx, name) {
   const { x, y, w, h } = LAYOUT.name;
   ctx.save();
-  ctx.font = `bold ${h * 0.82}px "Noto Sans TC"`;
+  ctx.font = `900 80px "Noto Sans TC"`;
   ctx.fillStyle = '#ffffff';
-  ctx.textAlign = 'center';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText(name, x + w / 2, y + h / 2);
+  ctx.fillText(name, x, y + h / 2);
   ctx.restore();
 }
 
-// 電話（綠框區域）
+// 電話（綠框區域）- 參考：中正藝文喆禮加盟店 灰白斜體大字
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
-  ctx.font = `bold ${h * 0.75}px "Bebas Neue"`;
-  ctx.fillStyle = '#f0c040';
-  ctx.textAlign = 'center';
+  ctx.font = `bold 72px "Bebas Neue"`;
+  ctx.fillStyle = 'rgba(220,210,190,0.9)';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText(phone, x + w / 2, y + h / 2);
+  ctx.fillText(phone, x, y + h / 2);
   ctx.restore();
 }
 
-// 日期（紫框區域）
+// 日期（紫框區域）- 參考：6/3 紅白粗體大字
 function drawDate(ctx, dateStr) {
   if (!dateStr) return;
   const { x, y, w, h } = LAYOUT.date;
   ctx.save();
-  ctx.font = `bold ${h * 0.58}px "Noto Sans TC"`;
-  ctx.fillStyle = '#ffffff';
+  // 白色描邊
+  ctx.font = `900 110px "Noto Sans TC"`;
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 8;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.strokeText(dateStr, x + w / 2, y + h / 2);
+  // 紅色填色
+  ctx.fillStyle = '#e8200a';
   ctx.fillText(dateStr, x + w / 2, y + h / 2);
   ctx.restore();
 }
