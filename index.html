@@ -775,12 +775,6 @@ function drawAgentPhoto(ctx, img) {
   const sx = x + (w - sw) / 2;
   const sy = y + (h - sh) / 2;
   ctx.drawImage(img, sx, sy, sw, sh);
-  // 底部漸層融合
-  const fade = ctx.createLinearGradient(0, y+h-100, 0, y+h);
-  fade.addColorStop(0, 'rgba(0,0,0,0)');
-  fade.addColorStop(1, 'rgba(0,0,0,0.5)');
-  ctx.fillStyle = fade;
-  ctx.fillRect(x, y, w, h);
   ctx.restore();
 }
 
