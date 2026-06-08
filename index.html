@@ -828,20 +828,18 @@ function drawAgentName(ctx, name) {
   ctx.restore();
 }
 
-// 電話（name下方，灰色粗體＋白色描邊＋文字間距，Bebas Neue）
+// 電話（name下方，灰色粗體＋白色描邊，Oswald，固定大小）
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
   ctx.font = `600 100px "Oswald"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '6px';
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 6;
   ctx.strokeText(phone, x + w / 2, y + h / 2);
   ctx.fillStyle = '#4c4647';
   ctx.fillText(phone, x + w / 2, y + h / 2);
-  ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
