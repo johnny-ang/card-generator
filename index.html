@@ -325,6 +325,22 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
   <div class="step" id="p4"><div class="step-dot">4</div><span>下載</span></div>
 </div>
 
+<!-- iOS 存圖提示 -->
+<div id="ios-hint" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:16px 16px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;text-align:center;">
+    <div style="font-size:13px;color:var(--gold);letter-spacing:0.2em;margin-bottom:12px">iOS 存圖步驟</div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:20px;line-height:1.6">
+      長按下方圖片<br>→ 選擇「儲存到照片」
+    </div>
+    <img id="ios-preview" style="width:100%;max-width:320px;border-radius:8px;margin-bottom:20px;" />
+    <br>
+    <button onclick="document.getElementById('ios-hint').style.display='none'"
+      style="background:var(--gold);color:#000;border:none;border-radius:8px;padding:12px 32px;font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">
+      關閉
+    </button>
+  </div>
+</div>
+
 <div class="layout">
 
   <!-- 左側表單 -->
@@ -917,10 +933,22 @@ function downloadCard() {
   const month      = document.getElementById('deal-month').value;
   const day        = document.getElementById('deal-day').value;
   const datePart   = dateHidden ? '' : `_${month}月${day}日`;
-  const link       = document.createElement('a');
-  link.download = `賀成交_${current?.name || '業務卡'}${datePart}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+  const fileName   = `賀成交_${current?.name || '業務卡'}${datePart}.png`;
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  if (isIOS) {
+    // iOS：顯示圖片讓使用者長按存圖
+    document.getElementById('ios-preview').src = canvas.toDataURL('image/png');
+    document.getElementById('ios-hint').style.display = 'flex';
+  } else {
+    // Android / 電腦：直接下載到相簿或下載資料夾
+    const link = document.createElement('a');
+    link.download = fileName;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
   document.getElementById('p4').className = 'step done';
   document.getElementById('p4').querySelector('.step-dot').textContent = '✓';
 }
