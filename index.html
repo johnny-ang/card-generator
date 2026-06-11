@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>賀成交 · 業務卡產生器</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Bebas+Neue&family=Oswald:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Bebas+Neue&family=Oswald:wght@600&family=Anton&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -521,14 +521,14 @@ const BRAND_LOGOS = {
   '有巢氏房屋': 'https://drive.google.com/uc?id=1LYLgFJxZ0_Tx7KkmxGdZ9GD_eFmma2na',
 };
 const LAYOUT = {
-  brand:     { x: 20,  y: 20,  w: 468, h: 185 },
+  brand:     { x: 50,  y: 20,  w: 468, h: 185 },
   branch:    { x: 550, y: 20,  w: 510, h: 145 },
   photo:     { x: 270, y: 145, w: 520, h: 680, r: 12 },
   date:      { x: 680, y: 355, w: 380, h: 130 },
-  name:      { x: 40,  y: 840, w: 360, h: 110 },
-  phone:     { x: 390, y: 840, w: 670, h: 110 },
+  name:      { x: 70,  y: 840, w: 360, h: 110 },
+  phone:     { x: 390, y: 870, w: 670, h: 110 },
   district:  { x: 20,  y: 270, w: 200, h: 200 },
-  houseType: { x: 20,  y: 270, w: 200, h: 200 },
+  houseType: { x: 60,  y: 270, w: 200, h: 200 },
 };
 
 // ── 狀態 ──
@@ -870,18 +870,18 @@ function loadImage(src) {
 //  繪製函式（對應底圖座標）
 // ────────────────────────────────────────────────────
 
-// 門市單位（綠框區域）- 白色字體＋光暈
+// 門市單位 - 白色字體＋描邊 59564f，靠左對齊
 function drawBranch(ctx, branch) {
   const { x, y, w, h } = LAYOUT.branch;
   ctx.save();
   ctx.font = `500 50px "Noto Sans TC"`;
-  ctx.textAlign = 'center';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.shadowColor = '#59564f';
-  ctx.shadowBlur  = 16;
+  ctx.strokeStyle = '#59564f';
+  ctx.lineWidth = 12;
+  ctx.strokeText(branch, x, y + h / 2);
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(branch, x + w / 2, y + h / 2);
-  ctx.shadowBlur = 0;
+  ctx.fillText(branch, x, y + h / 2);
   ctx.restore();
 }
 
@@ -922,7 +922,7 @@ function drawHouseType(ctx, houseType) {
 
 // 品牌 Logo（左上，對應參考圖比例）
 function drawBrandLogo(ctx, img) {
-  const x = 20, y = 15, w = 468, h = 185;
+  const x = 50, y = 15, w = 468, h = 185;
   ctx.save();
   const scale = Math.min(w / img.width, h / img.height);
   const sw = img.width  * scale;
@@ -969,33 +969,38 @@ function drawAgentPhotoPlaceholder(ctx) {
   ctx.restore();
 }
 
-// 姓名 - 白色字體＋描邊 59564f
+// 姓名 - 白色字體＋描邊 59564f，字距 5px
 function drawAgentName(ctx, name) {
   const { x, y, w, h } = LAYOUT.name;
   ctx.save();
   ctx.font = `900 88px "Noto Sans TC"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '5px';
   ctx.strokeStyle = '#59564f';
   ctx.lineWidth = 12;
   ctx.strokeText(name, x, y + h / 2);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(name, x, y + h / 2);
+  ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
 // 電話 - 白色字體＋描邊 59564f，Oswald
+// 電話 - 白色字體＋描邊 59564f，Oswald，字距 5px
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
   ctx.font = `600 88px "Oswald"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '5px';
   ctx.strokeStyle = '#59564f';
   ctx.lineWidth = 12;
   ctx.strokeText(phone, x, y + h / 2);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(phone, x, y + h / 2);
+  ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
@@ -1004,7 +1009,7 @@ function drawDate(ctx, dateStr) {
   if (!dateStr) return;
   const { x, y, w, h } = LAYOUT.date;
   ctx.save();
-  ctx.font = `900 90px "Noto Sans TC"`;
+  ctx.font = `400 90px "Anton"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.strokeStyle = '#fcfbfa';
