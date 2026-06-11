@@ -885,37 +885,32 @@ function drawBranch(ctx, branch) {
   ctx.restore();
 }
 
-// 行政區（左側）- 直式書寫，固定 52px
+// 行政區（左側）- 直式靠上，固定 52px
 function drawDistrict(ctx, district) {
   const { x, y, w, h } = LAYOUT.district;
   ctx.save();
   ctx.font = `500 52px "Noto Sans TC"`;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textBaseline = 'top';
   ctx.fillStyle = '#59564f';
-  const chars = district.split('');
   const lineH = 58;
-  const startY = y + (h - chars.length * lineH) / 2 + lineH / 2;
-  chars.forEach((ch, i) => {
-    ctx.fillText(ch, x + w / 2, startY + i * lineH);
+  district.split('').forEach((ch, i) => {
+    ctx.fillText(ch, x + w / 2, y + i * lineH);
   });
   ctx.restore();
 }
 
-// 房型（左側）- 直式書寫，固定 52px
+// 房型（左側）- 直式靠上，固定 52px
 function drawHouseType(ctx, houseType) {
   const { x, y, w, h } = LAYOUT.houseType;
   ctx.save();
   ctx.font = `500 52px "Noto Sans TC"`;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textBaseline = 'top';
   ctx.fillStyle = '#59564f';
-  const chars = houseType.split('');
   const lineH = 60;
-  const totalH = chars.length * lineH;
-  const startY = y + h - totalH / 2 - lineH / 2 + 20;
-  chars.forEach((ch, i) => {
-    ctx.fillText(ch, x + w / 2, startY + i * lineH);
+  houseType.split('').forEach((ch, i) => {
+    ctx.fillText(ch, x + w / 2, y + i * lineH);
   });
   ctx.restore();
 }
@@ -1012,7 +1007,7 @@ function drawDate(ctx, dateStr) {
   ctx.font = `400 90px "Anton"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '5px';
+  ctx.letterSpacing = '20px';
   ctx.strokeStyle = '#fcfbfa';
   ctx.lineWidth = 8;
   ctx.strokeText(dateStr, x + w / 2, y + h / 2);
