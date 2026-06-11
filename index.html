@@ -870,26 +870,23 @@ function loadImage(src) {
 //  繪製函式（對應底圖座標）
 // ────────────────────────────────────────────────────
 
-// 門市單位（綠框區域）
+// 門市單位（綠框區域）- 白色，無描邊
 function drawBranch(ctx, branch) {
   const { x, y, w, h } = LAYOUT.branch;
   ctx.save();
-  ctx.font = `900 72px "Noto Sans TC"`;
+  ctx.font = `500 58px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 6;
-  ctx.strokeText(branch, x + w / 2, y + h / 2);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(branch, x + w / 2, y + h / 2);
   ctx.restore();
 }
 
-// 行政區（左側定位區）
+// 行政區（左側）- 白色，無描邊
 function drawDistrict(ctx, district) {
   const { x, y, w, h } = LAYOUT.district;
   ctx.save();
-  ctx.font = `700 48px "Noto Sans TC"`;
+  ctx.font = `500 52px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#ffffff';
@@ -897,16 +894,13 @@ function drawDistrict(ctx, district) {
   ctx.restore();
 }
 
-// 房型（左側定位區）
+// 房型（左側）- 白色粗體，無描邊
 function drawHouseType(ctx, houseType) {
   const { x, y, w, h } = LAYOUT.houseType;
   ctx.save();
-  ctx.font = `900 64px "Noto Sans TC"`;
+  ctx.font = `900 72px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.strokeStyle = '#000000';
-  ctx.lineWidth = 4;
-  ctx.strokeText(houseType, x + w / 2, y + h * 0.7);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(houseType, x + w / 2, y + h * 0.7);
   ctx.restore();
@@ -925,7 +919,7 @@ function drawBrandLogo(ctx, img) {
   ctx.restore();
 }
 
-// 人物照片：智慧裁切 + Pixel 邊緣偵測白色描邊
+// 人物照片：智慧裁切（無描邊）
 function drawAgentPhoto(ctx, img) {
   const { x, y, w, h, r } = LAYOUT.photo;
 
@@ -940,70 +934,10 @@ function drawAgentPhoto(ctx, img) {
   else if (imgRatio > 1.2) { sy = y - (sh - h) * 0.3;  }
   else                     { sy = y - (sh - h) * 0.2;  }
 
-  // ── 步驟一：把照片畫到離屏 Canvas ──
-  const offscreen = document.createElement('canvas');
-  offscreen.width  = w;
-  offscreen.height = h;
-  const octx = offscreen.getContext('2d');
-
-  // 裁切範圍
-  octx.save();
-  roundRectPath(octx, 0, 0, w, h, r);
-  octx.clip();
-  octx.drawImage(img, sx - x, sy - y, sw, sh);
-  octx.restore();
-
-  // ── 步驟二：Pixel 邊緣偵測，往外擴展白色描邊 ──
-  const borderWidth = 12; // 描邊粗細（px），可調整
-  const imgData  = octx.getImageData(0, 0, w, h);
-  const pixels   = imgData.data;
-  const border   = octx.createImageData(w, h);
-  const bPixels  = border.data;
-
-  for (let py = 0; py < h; py++) {
-    for (let px = 0; px < w; px++) {
-      const idx = (py * w + px) * 4;
-      const alpha = pixels[idx + 3];
-
-      // 這個像素是透明的，檢查周圍是否有不透明像素
-      if (alpha < 128) {
-        let hasSolidNeighbor = false;
-        for (let dy = -borderWidth; dy <= borderWidth; dy++) {
-          for (let dx = -borderWidth; dx <= borderWidth; dx++) {
-            if (dx * dx + dy * dy > borderWidth * borderWidth) continue;
-            const nx = px + dx;
-            const ny = py + dy;
-            if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
-            const nIdx = (ny * w + nx) * 4;
-            if (pixels[nIdx + 3] > 128) {
-              hasSolidNeighbor = true;
-              break;
-            }
-          }
-          if (hasSolidNeighbor) break;
-        }
-        if (hasSolidNeighbor) {
-          bPixels[idx]     = 255; // R
-          bPixels[idx + 1] = 255; // G
-          bPixels[idx + 2] = 255; // B
-          bPixels[idx + 3] = 255; // A
-        }
-      }
-    }
-  }
-
-  // ── 步驟三：先畫白色描邊，再疊上原始照片 ──
-  const borderCanvas = document.createElement('canvas');
-  borderCanvas.width  = w;
-  borderCanvas.height = h;
-  const bctx = borderCanvas.getContext('2d');
-  bctx.putImageData(border, 0, 0);
-
   ctx.save();
   roundRectPath(ctx, x, y, w, h, r);
   ctx.clip();
-  ctx.drawImage(borderCanvas, x, y);  // 白色描邊層
-  ctx.drawImage(offscreen, x, y);     // 原始照片層
+  ctx.drawImage(img, sx, sy, sw, sh);
   ctx.restore();
 }
 
@@ -1021,51 +955,43 @@ function drawAgentPhotoPlaceholder(ctx) {
   ctx.restore();
 }
 
-// 姓名（下方置中，灰色粗體＋白色描邊＋文字間距）
+// 姓名 - 深色粗體，無描邊
 function drawAgentName(ctx, name) {
   const { x, y, w, h } = LAYOUT.name;
   ctx.save();
   ctx.font = `900 88px "Noto Sans TC"`;
-  ctx.textAlign = 'center';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '8px';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 6;
-  ctx.strokeText(name, x + w / 2, y + h / 2);
-  ctx.fillStyle = '#4c4647';
-  ctx.fillText(name, x + w / 2, y + h / 2);
-  ctx.letterSpacing = '0px';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillText(name, x, y + h / 2);
   ctx.restore();
 }
 
-// 電話（name下方，灰色粗體＋白色描邊，Oswald，固定大小）
+// 電話 - 深色，Oswald，無描邊
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
   ctx.font = `600 100px "Oswald"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 6;
-  ctx.strokeText(phone, x, y + h / 2);
-  ctx.fillStyle = '#4c4647';
+  ctx.fillStyle = '#1a1a1a';
   ctx.fillText(phone, x, y + h / 2);
   ctx.restore();
 }
 
-// 日期（右側，紅色粗體＋白色描邊）
+// 日期 - 紅色粗體＋白色光暈
 function drawDate(ctx, dateStr) {
   if (!dateStr) return;
   const { x, y, w, h } = LAYOUT.date;
   ctx.save();
-  ctx.font = `900 100px "Noto Sans TC"`;
+  ctx.font = `900 110px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 7;
-  ctx.strokeText(dateStr, x + w / 2, y + h / 2);
+  ctx.shadowColor = '#ffffff';
+  ctx.shadowBlur  = 20;
   ctx.fillStyle = '#e8200a';
   ctx.fillText(dateStr, x + w / 2, y + h / 2);
+  ctx.shadowBlur = 0;
   ctx.restore();
 }
 
