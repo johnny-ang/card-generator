@@ -870,18 +870,18 @@ function loadImage(src) {
 //  繪製函式（對應底圖座標）
 // ────────────────────────────────────────────────────
 
-// 門市單位（綠框區域）- 白色字體＋描邊
+// 門市單位（綠框區域）- 白色字體＋光暈
 function drawBranch(ctx, branch) {
   const { x, y, w, h } = LAYOUT.branch;
   ctx.save();
   ctx.font = `500 58px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.strokeStyle = '#59564f';
-  ctx.lineWidth = 6;
-  ctx.strokeText(branch, x + w / 2, y + h / 2);
+  ctx.shadowColor = '#59564f';
+  ctx.shadowBlur  = 16;
   ctx.fillStyle = '#ffffff';
   ctx.fillText(branch, x + w / 2, y + h / 2);
+  ctx.shadowBlur = 0;
   ctx.restore();
 }
 
@@ -966,7 +966,7 @@ function drawAgentName(ctx, name) {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.strokeStyle = '#59564f';
-  ctx.lineWidth = 6;
+  ctx.lineWidth = 12;
   ctx.strokeText(name, x, y + h / 2);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(name, x, y + h / 2);
@@ -981,7 +981,7 @@ function drawAgentPhone(ctx, phone) {
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ctx.strokeStyle = '#59564f';
-  ctx.lineWidth = 6;
+  ctx.lineWidth = 12;
   ctx.strokeText(phone, x, y + h / 2);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(phone, x, y + h / 2);
