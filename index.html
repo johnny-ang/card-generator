@@ -786,6 +786,11 @@ async function generateCard() {
   const W = 1080, H = 1080;
   canvas.width = W; canvas.height = H;
 
+  // 等待字型載入完成，避免手機端字型跑掉
+  await document.fonts.load('400 90px "Anton"');
+  await document.fonts.load('600 88px "Oswald"');
+  await document.fonts.load('900 88px "Noto Sans TC"');
+
   // 載入底圖、業務照片、品牌 Logo
   setStatus('載入底圖中…');
   const brandLogoUrl = current.brand ? BRAND_LOGOS[current.brand] : null;
@@ -964,56 +969,71 @@ function drawAgentPhotoPlaceholder(ctx) {
   ctx.restore();
 }
 
-// 姓名 - 白色字體＋描邊 59564f，字距 5px
+// 姓名 - 白色字體＋描邊 59564f，手動字距 5px
 function drawAgentName(ctx, name) {
   const { x, y, w, h } = LAYOUT.name;
   ctx.save();
   ctx.font = `900 88px "Noto Sans TC"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '5px';
-  ctx.strokeStyle = '#59564f';
-  ctx.lineWidth = 12;
-  ctx.strokeText(name, x, y + h / 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(name, x, y + h / 2);
-  ctx.letterSpacing = '0px';
+  const spacing = 5;
+  let curX = x;
+  for (let i = 0; i < name.length; i++) {
+    const ch = name[i];
+    ctx.strokeStyle = '#59564f';
+    ctx.lineWidth = 12;
+    ctx.strokeText(ch, curX, y + h / 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(ch, curX, y + h / 2);
+    curX += ctx.measureText(ch).width + spacing;
+  }
   ctx.restore();
 }
 
 // 電話 - 白色字體＋描邊 59564f，Oswald
-// 電話 - 白色字體＋描邊 59564f，Oswald，字距 5px
+// 電話 - 白色字體＋描邊 59564f，Oswald，手動字距 5px
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
   ctx.font = `600 88px "Oswald"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '5px';
-  ctx.strokeStyle = '#59564f';
-  ctx.lineWidth = 12;
-  ctx.strokeText(phone, x, y + h / 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.fillText(phone, x, y + h / 2);
-  ctx.letterSpacing = '0px';
+  const spacing = 5;
+  let curX = x;
+  for (let i = 0; i < phone.length; i++) {
+    const ch = phone[i];
+    ctx.strokeStyle = '#59564f';
+    ctx.lineWidth = 12;
+    ctx.strokeText(ch, curX, y + h / 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(ch, curX, y + h / 2);
+    curX += ctx.measureText(ch).width + spacing;
+  }
   ctx.restore();
 }
 
-// 日期 - 紅色字體＋白色描邊，Anton，字距 5px
+// 日期 - 紅色字體＋白色描邊，Anton，手動字距
 function drawDate(ctx, dateStr) {
   if (!dateStr) return;
   const { x, y, w, h } = LAYOUT.date;
   ctx.save();
   ctx.font = `400 90px "Anton"`;
-  ctx.textAlign = 'center';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '20px';
-  ctx.strokeStyle = '#fcfbfa';
-  ctx.lineWidth = 8;
-  ctx.strokeText(dateStr, x + w / 2, y + h / 2);
-  ctx.fillStyle = '#c82b3f';
-  ctx.fillText(dateStr, x + w / 2, y + h / 2);
-  ctx.letterSpacing = '0px';
+
+  const spacing = 20;
+  const totalW  = ctx.measureText(dateStr).width + spacing * (dateStr.length - 1);
+  let startX    = x + (w - totalW) / 2;
+
+  for (let i = 0; i < dateStr.length; i++) {
+    const ch = dateStr[i];
+    ctx.strokeStyle = '#fcfbfa';
+    ctx.lineWidth = 8;
+    ctx.strokeText(ch, startX, y + h / 2);
+    ctx.fillStyle = '#c82b3f';
+    ctx.fillText(ch, startX, y + h / 2);
+    startX += ctx.measureText(ch).width + spacing;
+  }
   ctx.restore();
 }
 
