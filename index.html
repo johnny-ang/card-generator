@@ -395,6 +395,53 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
       </div>
     </div>
 
+    <div class="field">
+      <label>行政區</label>
+      <div style="display:flex; gap:8px;">
+        <select id="district-select" style="flex:1" onchange="onDistrictChange()">
+          <option value="">— 請選擇 —</option>
+          <option value="桃園區">桃園區</option>
+          <option value="中壢區">中壢區</option>
+          <option value="平鎮區">平鎮區</option>
+          <option value="八德區">八德區</option>
+          <option value="楊梅區">楊梅區</option>
+          <option value="蘆竹區">蘆竹區</option>
+          <option value="大園區">大園區</option>
+          <option value="龜山區">龜山區</option>
+          <option value="龍潭區">龍潭區</option>
+          <option value="新屋區">新屋區</option>
+          <option value="觀音區">觀音區</option>
+          <option value="復興區">復興區</option>
+          <option value="手動輸入">手動輸入…</option>
+        </select>
+        <input type="text" id="district-input" placeholder="輸入行政區"
+          style="flex:1; display:none;" oninput="syncDistrictInput()" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>房型</label>
+      <div style="display:flex; gap:8px;">
+        <select id="house-type-select" style="flex:1" onchange="onHouseTypeChange()">
+          <option value="">— 請選擇 —</option>
+          <option value="兩房">兩房</option>
+          <option value="兩房車">兩房車</option>
+          <option value="三房">三房</option>
+          <option value="三房車">三房車</option>
+          <option value="四房">四房</option>
+          <option value="四房車">四房車</option>
+          <option value="透天">透天</option>
+          <option value="美宅">美宅</option>
+          <option value="店面">店面</option>
+          <option value="土地">土地</option>
+          <option value="廠房">廠房</option>
+          <option value="手動輸入">手動輸入…</option>
+        </select>
+        <input type="text" id="house-type-input" placeholder="輸入房型"
+          style="flex:1; display:none;" oninput="syncHouseTypeInput()" />
+      </div>
+    </div>
+
     <div class="divider"></div>
 
     <!-- 成交團隊 -->
@@ -465,7 +512,7 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
 <script>
 // ── 設定 ──
 const API_URL = "https://script.google.com/macros/s/AKfycbw-yw0sqW_PHb0AAEBGDEE1rB5kxxIVSLETWjjLVKnLmn0OZQ-zPn6y6-kBXHVtQvuf/exec";
-const BG_URL  = "https://drive.google.com/uc?id=117pdWRYQrN10KPrIjHJJyBmS0ZZwfELw&v=2";
+const BG_URL  = "https://drive.google.com/uc?id=117pdWRYQrN10KPrIjHJJyBmS0ZZwfELw&v=3";
 
 // 品牌 Logo 對應表
 const BRAND_LOGOS = {
@@ -474,10 +521,14 @@ const BRAND_LOGOS = {
   '有巢氏房屋': 'https://drive.google.com/uc?id=1LYLgFJxZ0_Tx7KkmxGdZ9GD_eFmma2na',
 };
 const LAYOUT = {
-  photo: { x: 340, y: 220, w: 380, h: 560, r: 16 },
-  name:  { x: 335, y: 790, w: 390, h: 80  },
-  phone: { x: 360, y: 920, w: 430, h: 65  },
-  date:  { x: 740, y: 490, w: 240, h: 150 },
+  brand:     { x: 20,  y: 20,  w: 490, h: 145 },
+  branch:    { x: 550, y: 20,  w: 510, h: 145 },
+  photo:     { x: 270, y: 145, w: 520, h: 680, r: 12 },
+  date:      { x: 680, y: 340, w: 380, h: 130 },
+  name:      { x: 20,  y: 840, w: 360, h: 110 },
+  phone:     { x: 390, y: 840, w: 670, h: 110 },
+  district:  { x: 20,  y: 270, w: 200, h: 200 }, // 行政區（左側）
+  houseType: { x: 20,  y: 270, w: 200, h: 200 }, // 房型（左側）
 };
 
 // ── 狀態 ──
@@ -631,6 +682,48 @@ function setProgress(step) {
   });
 }
 
+// 行政區下拉切換
+function onDistrictChange() {
+  const select = document.getElementById('district-select');
+  const input  = document.getElementById('district-input');
+  if (select.value === '手動輸入') {
+    input.style.display = 'block';
+    input.focus();
+  } else {
+    input.style.display = 'none';
+    input.value = '';
+  }
+}
+
+function syncDistrictInput() {
+  // 手動輸入時同步值，供 generateCard 讀取
+}
+
+function getDistrict() {
+  const select = document.getElementById('district-select');
+  const input  = document.getElementById('district-input');
+  return select.value === '手動輸入' ? input.value.trim() : select.value;
+}
+
+// 房型下拉切換
+function onHouseTypeChange() {
+  const select = document.getElementById('house-type-select');
+  const input  = document.getElementById('house-type-input');
+  if (select.value === '手動輸入') {
+    input.style.display = 'block';
+    input.focus();
+  } else {
+    input.style.display = 'none';
+    input.value = '';
+  }
+}
+
+function getHouseType() {
+  const select = document.getElementById('house-type-select');
+  const input  = document.getElementById('house-type-input');
+  return select.value === '手動輸入' ? input.value.trim() : select.value;
+}
+
 function toggleTeamVisible(checkbox) {
   const fields = document.getElementById('team-fields');
   fields.style.display = checkbox.checked ? 'block' : 'none';
@@ -680,7 +773,9 @@ async function generateCard() {
   const day   = document.getElementById('deal-day').value;
   if (!dateHidden && (!month || !day)) { setStatus('請選擇成交日期', 'err'); return; }
 
-  const dateStr = dateHidden ? '' : `${month}/${day}`;
+  const dateStr    = dateHidden ? '' : `${month}/${day}`;
+  const district   = getDistrict();
+  const houseType  = getHouseType();
 
   setStatus('合成中…');
   setProgress(3);
@@ -715,7 +810,10 @@ async function generateCard() {
     drawBrandLogo(ctx, brandImg);
   }
 
-  // 3. 人物照片（紅框區域）
+  // 3. branch（綠框區域）
+  if (current.branch) drawBranch(ctx, current.branch);
+
+  // 4. 人物照片（紅框區域）
   if (agentImg) {
     drawAgentPhoto(ctx, agentImg);
   } else {
@@ -731,7 +829,13 @@ async function generateCard() {
   // 5. 日期（勾選不顯示時 dateStr 為空）
   if (dateStr) drawDate(ctx, dateStr);
 
-  // 6. 成交團隊 Logo（勾選顯示時才畫）
+  // 8. 行政區
+  if (district) drawDistrict(ctx, district);
+
+  // 9. 房型
+  if (houseType) drawHouseType(ctx, houseType);
+
+  // 10. 成交團隊 Logo
   if (document.getElementById('team-visible').checked) {
     drawTeamLogos(ctx, W, H);
   }
@@ -766,6 +870,48 @@ function loadImage(src) {
 //  繪製函式（對應底圖座標）
 // ────────────────────────────────────────────────────
 
+// 門市單位（綠框區域）
+function drawBranch(ctx, branch) {
+  const { x, y, w, h } = LAYOUT.branch;
+  ctx.save();
+  ctx.font = `900 72px "Noto Sans TC"`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 6;
+  ctx.strokeText(branch, x + w / 2, y + h / 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(branch, x + w / 2, y + h / 2);
+  ctx.restore();
+}
+
+// 行政區（左側定位區）
+function drawDistrict(ctx, district) {
+  const { x, y, w, h } = LAYOUT.district;
+  ctx.save();
+  ctx.font = `700 48px "Noto Sans TC"`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(district, x + w / 2, y + h / 3);
+  ctx.restore();
+}
+
+// 房型（左側定位區）
+function drawHouseType(ctx, houseType) {
+  const { x, y, w, h } = LAYOUT.houseType;
+  ctx.save();
+  ctx.font = `900 64px "Noto Sans TC"`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 4;
+  ctx.strokeText(houseType, x + w / 2, y + h * 0.7);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(houseType, x + w / 2, y + h * 0.7);
+  ctx.restore();
+}
+
 // 品牌 Logo（左上，對應參考圖比例）
 function drawBrandLogo(ctx, img) {
   const x = 20, y = 15, w = 585, h = 232;
@@ -779,37 +925,85 @@ function drawBrandLogo(ctx, img) {
   ctx.restore();
 }
 
-// 人物照片：智慧裁切，依比例自動調整對齊位置
+// 人物照片：智慧裁切 + Pixel 邊緣偵測白色描邊
 function drawAgentPhoto(ctx, img) {
   const { x, y, w, h, r } = LAYOUT.photo;
 
-  const imgRatio  = img.width / img.height;  // 原圖比例
-  const boxRatio  = w / h;                   // 框框比例
-
-  const scale = Math.max(w / img.width, h / img.height);
+  const imgRatio = img.width / img.height;
+  const scale    = Math.max(w / img.width, h / img.height);
   const sw = img.width  * scale;
   const sh = img.height * scale;
-
-  // 水平：永遠置中
   const sx = x + (w - sw) / 2;
 
-  // 垂直對齊策略：依原圖比例決定
   let sy;
-  if (imgRatio < 0.75) {
-    // 直式人像（較高）：從頂部往下偏移15%，保留臉部和上半身
-    sy = y - (sh - h) * 0.15;
-  } else if (imgRatio > 1.2) {
-    // 橫式照片：往上偏移，避免人物被裁到腳
-    sy = y - (sh - h) * 0.3;
-  } else {
-    // 接近方形：置中偏上一點
-    sy = y - (sh - h) * 0.2;
+  if (imgRatio < 0.75)     { sy = y - (sh - h) * 0.15; }
+  else if (imgRatio > 1.2) { sy = y - (sh - h) * 0.3;  }
+  else                     { sy = y - (sh - h) * 0.2;  }
+
+  // ── 步驟一：把照片畫到離屏 Canvas ──
+  const offscreen = document.createElement('canvas');
+  offscreen.width  = w;
+  offscreen.height = h;
+  const octx = offscreen.getContext('2d');
+
+  // 裁切範圍
+  octx.save();
+  roundRectPath(octx, 0, 0, w, h, r);
+  octx.clip();
+  octx.drawImage(img, sx - x, sy - y, sw, sh);
+  octx.restore();
+
+  // ── 步驟二：Pixel 邊緣偵測，往外擴展白色描邊 ──
+  const borderWidth = 12; // 描邊粗細（px），可調整
+  const imgData  = octx.getImageData(0, 0, w, h);
+  const pixels   = imgData.data;
+  const border   = octx.createImageData(w, h);
+  const bPixels  = border.data;
+
+  for (let py = 0; py < h; py++) {
+    for (let px = 0; px < w; px++) {
+      const idx = (py * w + px) * 4;
+      const alpha = pixels[idx + 3];
+
+      // 這個像素是透明的，檢查周圍是否有不透明像素
+      if (alpha < 128) {
+        let hasSolidNeighbor = false;
+        for (let dy = -borderWidth; dy <= borderWidth; dy++) {
+          for (let dx = -borderWidth; dx <= borderWidth; dx++) {
+            if (dx * dx + dy * dy > borderWidth * borderWidth) continue;
+            const nx = px + dx;
+            const ny = py + dy;
+            if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+            const nIdx = (ny * w + nx) * 4;
+            if (pixels[nIdx + 3] > 128) {
+              hasSolidNeighbor = true;
+              break;
+            }
+          }
+          if (hasSolidNeighbor) break;
+        }
+        if (hasSolidNeighbor) {
+          bPixels[idx]     = 255; // R
+          bPixels[idx + 1] = 255; // G
+          bPixels[idx + 2] = 255; // B
+          bPixels[idx + 3] = 255; // A
+        }
+      }
+    }
   }
+
+  // ── 步驟三：先畫白色描邊，再疊上原始照片 ──
+  const borderCanvas = document.createElement('canvas');
+  borderCanvas.width  = w;
+  borderCanvas.height = h;
+  const bctx = borderCanvas.getContext('2d');
+  bctx.putImageData(border, 0, 0);
 
   ctx.save();
   roundRectPath(ctx, x, y, w, h, r);
   ctx.clip();
-  ctx.drawImage(img, sx, sy, sw, sh);
+  ctx.drawImage(borderCanvas, x, y);  // 白色描邊層
+  ctx.drawImage(offscreen, x, y);     // 原始照片層
   ctx.restore();
 }
 
