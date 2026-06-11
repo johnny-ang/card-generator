@@ -521,14 +521,14 @@ const BRAND_LOGOS = {
   '有巢氏房屋': 'https://drive.google.com/uc?id=1LYLgFJxZ0_Tx7KkmxGdZ9GD_eFmma2na',
 };
 const LAYOUT = {
-  brand:     { x: 50,  y: 20,  w: 468, h: 185 },
+  brand:     { x: 50,  y: 10,  w: 468, h: 185 },
   branch:    { x: 550, y: 20,  w: 510, h: 145 },
   photo:     { x: 270, y: 145, w: 520, h: 680, r: 12 },
-  date:      { x: 680, y: 355, w: 380, h: 130 },
-  name:      { x: 70,  y: 840, w: 360, h: 110 },
-  phone:     { x: 390, y: 870, w: 670, h: 110 },
+  date:      { x: 680, y: 380, w: 380, h: 130 },
+  name:      { x: 100, y: 840, w: 360, h: 110 },
+  phone:     { x: 420, y: 850, w: 670, h: 110 },
   district:  { x: 20,  y: 270, w: 200, h: 200 },
-  houseType: { x: 60,  y: 270, w: 200, h: 200 },
+  houseType: { x: 50,  y: 270, w: 200, h: 200 },
 };
 
 // ── 狀態 ──
@@ -906,7 +906,7 @@ function drawDistrict(ctx, district) {
 function drawHouseType(ctx, houseType) {
   const { x, y, w, h } = LAYOUT.houseType;
   ctx.save();
-  ctx.font = `900 52px "Noto Sans TC"`;
+  ctx.font = `500 52px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#59564f';
@@ -922,7 +922,7 @@ function drawHouseType(ctx, houseType) {
 
 // 品牌 Logo（左上，對應參考圖比例）
 function drawBrandLogo(ctx, img) {
-  const x = 50, y = 15, w = 468, h = 185;
+  const x = 50, y = 10, w = 468, h = 185;
   ctx.save();
   const scale = Math.min(w / img.width, h / img.height);
   const sw = img.width  * scale;
@@ -1004,7 +1004,7 @@ function drawAgentPhone(ctx, phone) {
   ctx.restore();
 }
 
-// 日期 - 紅色字體＋白色描邊，無光暈
+// 日期 - 紅色字體＋白色描邊，Anton，字距 5px
 function drawDate(ctx, dateStr) {
   if (!dateStr) return;
   const { x, y, w, h } = LAYOUT.date;
@@ -1012,11 +1012,13 @@ function drawDate(ctx, dateStr) {
   ctx.font = `400 90px "Anton"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '5px';
   ctx.strokeStyle = '#fcfbfa';
   ctx.lineWidth = 8;
   ctx.strokeText(dateStr, x + w / 2, y + h / 2);
   ctx.fillStyle = '#c82b3f';
   ctx.fillText(dateStr, x + w / 2, y + h / 2);
+  ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
