@@ -870,13 +870,16 @@ function loadImage(src) {
 //  繪製函式（對應底圖座標）
 // ────────────────────────────────────────────────────
 
-// 門市單位（綠框區域）- 白色，無描邊
+// 門市單位（綠框區域）- 白色字體＋描邊
 function drawBranch(ctx, branch) {
   const { x, y, w, h } = LAYOUT.branch;
   ctx.save();
   ctx.font = `500 58px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.strokeStyle = '#59564f';
+  ctx.lineWidth = 6;
+  ctx.strokeText(branch, x + w / 2, y + h / 2);
   ctx.fillStyle = '#ffffff';
   ctx.fillText(branch, x + w / 2, y + h / 2);
   ctx.restore();
@@ -889,7 +892,7 @@ function drawDistrict(ctx, district) {
   ctx.font = `500 52px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#59564f';
   ctx.fillText(district, x + w / 2, y + h / 3);
   ctx.restore();
 }
@@ -901,7 +904,7 @@ function drawHouseType(ctx, houseType) {
   ctx.font = `900 72px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#59564f';
   ctx.fillText(houseType, x + w / 2, y + h * 0.7);
   ctx.restore();
 }
@@ -955,31 +958,37 @@ function drawAgentPhotoPlaceholder(ctx) {
   ctx.restore();
 }
 
-// 姓名 - 深色粗體，無描邊
+// 姓名 - 白色字體＋描邊 59564f
 function drawAgentName(ctx, name) {
   const { x, y, w, h } = LAYOUT.name;
   ctx.save();
   ctx.font = `900 88px "Noto Sans TC"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#1a1a1a';
+  ctx.strokeStyle = '#59564f';
+  ctx.lineWidth = 6;
+  ctx.strokeText(name, x, y + h / 2);
+  ctx.fillStyle = '#ffffff';
   ctx.fillText(name, x, y + h / 2);
   ctx.restore();
 }
 
-// 電話 - 深色，Oswald，無描邊
+// 電話 - 白色字體＋描邊 59564f，Oswald
 function drawAgentPhone(ctx, phone) {
   const { x, y, w, h } = LAYOUT.phone;
   ctx.save();
   ctx.font = `600 100px "Oswald"`;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#1a1a1a';
+  ctx.strokeStyle = '#59564f';
+  ctx.lineWidth = 6;
+  ctx.strokeText(phone, x, y + h / 2);
+  ctx.fillStyle = '#ffffff';
   ctx.fillText(phone, x, y + h / 2);
   ctx.restore();
 }
 
-// 日期 - 紅色粗體＋白色光暈
+// 日期 - 紅色字體＋白色描邊，無光暈
 function drawDate(ctx, dateStr) {
   if (!dateStr) return;
   const { x, y, w, h } = LAYOUT.date;
@@ -987,11 +996,11 @@ function drawDate(ctx, dateStr) {
   ctx.font = `900 110px "Noto Sans TC"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.shadowColor = '#ffffff';
-  ctx.shadowBlur  = 20;
-  ctx.fillStyle = '#e8200a';
+  ctx.strokeStyle = '#fcfbfa';
+  ctx.lineWidth = 8;
+  ctx.strokeText(dateStr, x + w / 2, y + h / 2);
+  ctx.fillStyle = '#c82b3f';
   ctx.fillText(dateStr, x + w / 2, y + h / 2);
-  ctx.shadowBlur = 0;
   ctx.restore();
 }
 
