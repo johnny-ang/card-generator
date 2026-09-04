@@ -404,7 +404,6 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
           <option value="中壢區">中壢區</option>
           <option value="平鎮區">平鎮區</option>
           <option value="八德區">八德區</option>
-          <option value="八德區">大溪區</option>
           <option value="楊梅區">楊梅區</option>
           <option value="蘆竹區">蘆竹區</option>
           <option value="大園區">大園區</option>
@@ -435,7 +434,7 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
           <option value="美宅">美宅</option>
           <option value="店面">店面</option>
           <option value="土地">土地</option>
-          <option value="廠房">套房</option>
+          <option value="廠房">廠房</option>
           <option value="手動輸入">手動輸入…</option>
         </select>
         <input type="text" id="house-type-input" placeholder="輸入房型"
@@ -516,7 +515,7 @@ select:disabled { opacity: 0.4; cursor: not-allowed; }
 <script>
 // ── 設定 ──
 const API_URL = "https://script.google.com/macros/s/AKfycbw-yw0sqW_PHb0AAEBGDEE1rB5kxxIVSLETWjjLVKnLmn0OZQ-zPn6y6-kBXHVtQvuf/exec";
-const BG_URL  = "https://github.com/johnny-ang/card-generator/blob/a7b98a063374703545875615cd261576401eb0ad/202609%E5%BA%95%E5%9C%96.jpg";
+const BG_URL  = "https://raw.githubusercontent.com/johnny-ang/card-generator/main/202609%E5%BA%95%E5%9C%96.jpg";
 
 // 品牌 Logo 對應表
 const BRAND_LOGOS = {
@@ -799,7 +798,7 @@ async function generateCard() {
   setStatus('載入底圖中…');
   const brandLogoUrl = current.brand ? BRAND_LOGOS[current.brand] : null;
   const [bgImg, agentImg, brandImg] = await Promise.all([
-    loadImage(proxyUrl(BG_URL)).catch(() => null),
+    loadImage(BG_URL).catch(() => null),
     current.photo_url ? loadImage(proxyUrl(current.photo_url)).catch(() => null) : Promise.resolve(null),
     brandLogoUrl ? loadImage(proxyUrl(brandLogoUrl)).catch(() => null) : Promise.resolve(null)
   ]);
